@@ -1,0 +1,5 @@
+{
+  "name": "AcademiaSync - Attendance & Leave Manager",
+  "description": "A role-based College Attendance and Leave Management System designed with MongoDB schema principles. Features hierarchical user management (Principal -> HOD -> Staff), approval workflows, calendar tracking, and detailed audit logs.",
+  "requestFramePermissions": []
+}
