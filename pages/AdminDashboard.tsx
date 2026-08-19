@@ -158,8 +158,16 @@ export default function AdminDashboard() {
 
     if (loading) {
         return (
-            <div className="text-center py-20 text-gray-500">
-                Loading admin dashboard...
+            <div className="max-w-6xl mx-auto space-y-8 animate-pulse">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="bg-white p-6 rounded-2xl h-28 border border-gray-100" />
+                    ))}
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="h-96 bg-white rounded-2xl border border-gray-100" />
+                    <div className="h-96 bg-white rounded-2xl border border-gray-100" />
+                </div>
             </div>
         );
     }
@@ -171,14 +179,14 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto space-y-8 pb-16">
 
             {/* ================= STATS ================= */}
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <Stat title="Team Members" value={subordinates.length} />
+                <Stat title="Faculty & Staff" value={subordinates.length} />
                 <Stat title="Leave Requests" value={leaveRequests.length} color="text-purple-600" />
-                <Stat title="Attendance Requests" value={attendanceRequests.length} color="text-blue-600" />
+                <Stat title="Check-In Requests" value={attendanceRequests.length} color="text-blue-600" />
                 <Stat title="Edit Requests" value={attendanceEdits.length} color="text-orange-600" />
             </div>
 
@@ -187,11 +195,15 @@ export default function AdminDashboard() {
                 {/* ================= REQUESTS ================= */}
 
                 <div className="space-y-6">
-                    <h2 className="text-xl font-bold">Pending Approvals</h2>
+                    <h2 className="text-xl font-bold text-gray-800">Pending Approvals</h2>
 
                     {allRequests.length === 0 && (
-                        <div className="bg-white p-6 rounded-xl text-center text-gray-500 shadow-sm">
-                            No pending requests
+                        <div className="bg-white p-8 rounded-2xl text-center text-gray-500 shadow-sm border border-gray-100">
+                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-50 text-green-500 mb-3">
+                                <Calendar size={24} />
+                            </div>
+                            <p className="font-medium text-gray-900">You're all caught up!</p>
+                            <p className="text-sm mt-1">No pending requests at the moment.</p>
                         </div>
                     )}
 
@@ -223,56 +235,80 @@ export default function AdminDashboard() {
                             }
                         />
                     ))}
-
                 </div>
 
                 {/* ================= TEAM ================= */}
 
                 <div>
-                    <h2 className="text-xl font-bold mb-6">Team Members</h2>
+                    <h2 className="text-xl font-bold mb-6 text-gray-800">Faculty & Staff</h2>
 
-                    <div className="bg-white rounded-xl border overflow-hidden shadow-sm">
-                        {subordinates.map(sub => (
-                            <div
-                                key={sub._id}
-                                onClick={() => handleUserClick(sub)}
-                                className="flex justify-between items-center p-4 border-b hover:bg-gray-50 cursor-pointer"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                        <User size={18} />
+                    {subordinates.length === 0 ? (
+                        <div className="bg-white p-8 rounded-2xl text-center text-gray-500 shadow-sm border border-gray-100">
+                            <p>No faculty or staff members found.</p>
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                            {subordinates.map((sub, idx) => (
+                                <div
+                                    key={sub._id}
+                                    onClick={() => handleUserClick(sub)}
+                                    className={`flex justify-between items-center p-4 hover:bg-gray-50 cursor-pointer transition ${idx !== subordinates.length - 1 ? 'border-b border-gray-100' : ''}`}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center">
+                                            <User size={20} />
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-gray-900">{sub.name}</div>
+                                            <div className="text-sm text-gray-500">{sub.email}</div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div className="font-medium">{sub.name}</div>
-                                        <div className="text-xs text-gray-500">{sub.email}</div>
-                                    </div>
+                                    <ChevronRight size={18} className="text-gray-400" />
                                 </div>
-                                <ChevronRight size={16} />
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* ================= ATTENDANCE VIEWER ================= */}
 
             {selectedUser && (
-                <div className="bg-white rounded-xl border p-6 shadow-sm">
-                    <h3 className="font-semibold mb-4">
-                        Attendance — {selectedUser.name}
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mt-8 animate-in fade-in slide-in-from-bottom-4">
+                    <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
+                        <Clock size={20} className="text-blue-600" />
+                        Attendance History — {selectedUser.name}
                     </h3>
 
                     {loadingAttendance ? (
-                        <p className="text-gray-500">Loading...</p>
+                        <div className="animate-pulse space-y-3">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="h-12 bg-gray-50 rounded-xl w-full" />
+                            ))}
+                        </div>
                     ) : attendanceData.length === 0 ? (
-                        <p className="text-gray-500">No attendance records</p>
+                        <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-xl">
+                            No attendance records found for {selectedUser.name}
+                        </div>
                     ) : (
-                        attendanceData.map(r => (
-                            <div key={r._id} className="flex justify-between py-2 border-b text-sm">
-                                <span>{r.date}</span>
-                                <span className="capitalize font-medium">{r.status}</span>
-                            </div>
-                        ))
+                        <div className="bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
+                            {attendanceData.map((r, idx) => (
+                                <div key={r._id} className={`flex justify-between items-center p-4 text-sm ${idx !== attendanceData.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                                    <span className="font-medium text-gray-700">{r.date}</span>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-gray-500 text-xs">{r.checkIn || '--:--'} to {r.checkOut || '--:--'}</span>
+                                        <span className={`capitalize font-semibold px-2 py-1 rounded-md text-xs ${
+                                            r.status === 'present' ? 'bg-green-100 text-green-700' :
+                                            r.status === 'absent' ? 'bg-red-100 text-red-700' :
+                                            r.status === 'leave' ? 'bg-purple-100 text-purple-700' :
+                                            'bg-orange-100 text-orange-700'
+                                        }`}>
+                                            {r.status.replace("_", " ")}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </div>
             )}

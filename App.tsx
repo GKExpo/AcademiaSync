@@ -118,15 +118,17 @@ const Sidebar = ({
             }}
           />
 
-          <SidebarItem
-            icon={<Shield size={18} />}
-            label="Admin Panel"
-            active={viewMode === "admin"}
-            onClick={() => {
-              setViewMode("admin");
-              onClose();
-            }}
-          />
+          {useAuth().user?.role.some(r => ['hod', 'principal'].includes(r)) && (
+            <SidebarItem
+              icon={<Shield size={18} />}
+              label="Admin Panel"
+              active={viewMode === "admin"}
+              onClick={() => {
+                setViewMode("admin");
+                onClose();
+              }}
+            />
+          )}
         </div>
 
         <div className="absolute bottom-0 w-full p-4 border-t">
@@ -296,11 +298,13 @@ const Header = ({
 
 const Layout = () => {
   const { user } = useAuth();
-  const [viewMode, setViewMode] =
-    useState<"personal" | "admin">("personal");
+  const [viewMode, setViewMode] = useState<"personal" | "admin">("personal");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!user) return <Navigate to="/login" />;
+
+  const isAdminOrHOD = user.role.some(r => ['hod', 'principal'].includes(r));
+  const effectiveViewMode = isAdminOrHOD ? viewMode : "personal";
 
   return (
     <div className="min-h-screen bg-gray-50 flex relative">
@@ -308,7 +312,7 @@ const Layout = () => {
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        viewMode={viewMode}
+        viewMode={effectiveViewMode}
         setViewMode={setViewMode}
       />
 
@@ -316,19 +320,19 @@ const Layout = () => {
 
         <Header
           title={
-            viewMode === "admin"
-              ? "Admin Dashboard"
-              : "My Attendance"
+            effectiveViewMode === "admin"
+              ? "Admin Panel"
+              : "My Dashboard"
           }
           onMenuClick={() => setSidebarOpen(true)}
         />
 
         <main className="flex-1 p-6 max-w-6xl mx-auto w-full">
-          {viewMode === "admin"
+          {effectiveViewMode === "admin"
             ? <AdminDashboard />
             : <UserDashboard />}
 
-          <StatusLegend />
+          {effectiveViewMode === "personal" && <StatusLegend />}
         </main>
       </div>
     </div>

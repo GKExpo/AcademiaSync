@@ -9,7 +9,7 @@ import { Attendance } from "../types/attendance";
 import { apiRequest } from "../services/api";
 
 export default function UserDashboard() {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
 
     const [attendance, setAttendance] = useState<Attendance[]>([]);
     const [today, setToday] = useState<Attendance | null>(null);
@@ -29,24 +29,23 @@ export default function UserDashboard() {
     const loadAttendance = useCallback(async () => {
         if (!token) return;
 
+        setLoading(true);
         try {
-            setLoading(true);
+            // Must be YYYY-MM
+            const mStr = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const yStr = currentDate.getFullYear();
+            const monthQuery = `${yStr}-${mStr}`;
+            
+            const resData = await apiRequest(`/api/attendance/me?month=${monthQuery}`);
+            
+            // Handle array safely
+            const data = Array.isArray(resData) ? resData : resData?.data || [];
+            
+            setAttendance(data);
 
-            const month = currentDate.toISOString().slice(0, 7);
-
-            const res = await apiRequest(`/api/attendance/me?month=${month}`, {
-                method: "GET"
-            });
-
-            setAttendance(res);
-
-            const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
-            const todayRec = res.find(
-                (a: Attendance) => a.date === todayStr
-            );
-
+            const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+            const todayRec = data.find((a: any) => a.date === todayStr);
             setToday(todayRec || null);
-
         } catch (err: any) {
             toast.error("Failed to load attendance");
         } finally {
@@ -58,93 +57,55 @@ export default function UserDashboard() {
         loadAttendance();
     }, [loadAttendance]);
 
-    /* ================= CHECK IN ================= */
+    /* ================= ACTIONS ================= */
 
     const checkIn = async () => {
-        if (!token || actionLoading) return;
-
+        if (actionLoading) return;
+        setActionLoading(true);
         try {
-            setActionLoading(true);
-
-            await apiRequest('/api/attendance/check-in', {
-                method: "POST",
-                body: JSON.stringify({})
-            });
-
-            toast.success("Checked in successfully ✅");
-            await loadAttendance();
-
+            await apiRequest('/api/attendance/check-in', { method: 'POST' });
+            toast.success("Checked in successfully");
+            loadAttendance();
         } catch (err: any) {
-            toast.error(
-                err?.message || "Check-in failed"
-            );
+            toast.error(err?.message || "Check-in failed");
         } finally {
             setActionLoading(false);
         }
     };
-
-    /* ================= CHECK OUT ================= */
 
     const checkOut = async () => {
-        if (!token || actionLoading) return;
-
+        if (actionLoading) return;
+        setActionLoading(true);
         try {
-            setActionLoading(true);
-
-            await apiRequest('/api/attendance/check-out', {
-                method: "POST",
-                body: JSON.stringify({})
-            });
-
-            toast.success("Checked out successfully ✅");
-            await loadAttendance();
-
+            await apiRequest('/api/attendance/check-out', { method: 'POST' });
+            toast.success("Checked out successfully");
+            loadAttendance();
         } catch (err: any) {
-            toast.error(
-                err?.message || "Check-out failed"
-            );
+            toast.error(err?.message || "Check-out failed");
         } finally {
             setActionLoading(false);
         }
     };
-
-    /* ================= APPLY LEAVE ================= */
 
     const applyLeave = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!leaveFrom || !leaveTo || !leaveReason) {
-            toast.error("Please fill all fields");
-            return;
-        }
-
-        if (!token) return;
-
+        setSubmitting(true);
         try {
-            setSubmitting(true);
-
             await apiRequest('/api/requests/leave', {
-                method: "POST",
+                method: 'POST',
                 body: JSON.stringify({
                     fromDate: leaveFrom,
                     toDate: leaveTo,
                     reason: leaveReason
                 })
             });
-
-            toast.success("Leave request submitted 📝");
-
+            toast.success("Leave requested successfully");
+            setShowLeave(false);
             setLeaveFrom("");
             setLeaveTo("");
             setLeaveReason("");
-            setShowLeave(false);
-
-            await loadAttendance();
-
         } catch (err: any) {
-            toast.error(
-                err?.message || "Leave request failed"
-            );
+            toast.error(err?.message || "Leave request failed");
         } finally {
             setSubmitting(false);
         }
@@ -155,11 +116,21 @@ export default function UserDashboard() {
     return (
         <div className="w-full space-y-8 pb-16">
 
+            {/* Greeting & Summary */}
+            <div className="mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+                    Welcome back, {user?.name.split(' ')[0]}! 👋
+                </h2>
+                <p className="text-gray-500 mt-2">
+                    Here is your attendance overview for today.
+                </p>
+            </div>
+
             {/* Loading Skeleton */}
             {loading && (
-                <div className="animate-pulse bg-white rounded-2xl p-6 shadow-sm">
-                    <div className="h-4 bg-gray-200 rounded w-1/3 mb-4" />
-                    <div className="h-10 bg-gray-200 rounded w-full" />
+                <div className="animate-pulse bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                    <div className="h-6 bg-gray-200 rounded-lg w-1/3 mb-6" />
+                    <div className="h-20 bg-gray-100 rounded-xl w-full" />
                 </div>
             )}
 
