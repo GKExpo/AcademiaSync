@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   server: {
     cleartext: false,
     allowNavigation: [
-      'academiasync-backend.onrender.com'
+      'academiasync-backend.shardulk091.workers.dev'
     ]
   }
 };
