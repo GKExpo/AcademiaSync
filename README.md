@@ -23,7 +23,7 @@ AcademiaSync is a modern, mobile-first attendance and leave management platform 
 
 ## Architecture
 
-``text
+```text
 Web / Android App
       |
       v
@@ -41,7 +41,7 @@ Hono API
       v
 Cloudflare D1
 (Serverless SQLite Database)
-``
+```
 
 **Frontend:** Delivers a highly responsive UI/UX. Uses Capacitor to compile natively for Android devices, utilizing native SharedPreferences for secure persistence.
 **Cloudflare Workers & Hono:** Provides edge-optimized API handling with extremely low latency, effectively replacing legacy monolithic Express servers.
@@ -100,35 +100,35 @@ Authentication is managed via JSON Web Tokens (JWT). For mobile devices, session
 
 To run the frontend locally:
 
-`ash
+```bash
 git clone https://github.com/GKExpo/AcademiaSync.git
 cd AcademiaSync
 npm install
 npm run dev
-`
+```
 
 ## Android Development
 
 The application compiles to Android using Capacitor. To build and deploy to a connected physical device via USB debugging:
 
-`ash
+```bash
 npm run build
 npx cap sync android
 npx cap run android
-`
+```
 
 ## Production Backend
 
 The current production edge-worker is hosted dynamically via Cloudflare Workers backed by Cloudflare D1 at:
-https://academiasync-backend.shardulk091.workers.dev
+`https://academiasync-backend.shardulk091.workers.dev`
 
 ## Environment Configuration
 
-The frontend requires an .env file at the root directory:
+The frontend requires an `.env` file at the root directory:
 
-`env
+```env
 VITE_API_URL=
-`
+```
 
 ## Testing & Verification
 The current release has undergone manual verification and testing, including:
@@ -141,4 +141,3 @@ The current release has undergone manual verification and testing, including:
 ## Release
 **Current release: v1.1.0**
 Includes the migration to Cloudflare Workers, major UI/UX polish, persistent native authentication, attendance/leave stability updates, and Android presentation readiness.
-

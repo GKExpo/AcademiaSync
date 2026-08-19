@@ -7,8 +7,8 @@ export async function apiRequest(
 ) {
     const { value: token } = await Preferences.get({ key: "token" });
 
-    console.log("Calling:", `${API_URL}${endpoint}`);
-    console.log("Token:", token);
+    
+    
 
     const response = await fetch(`${API_URL}${endpoint}`, {
         ...options,
