@@ -335,40 +335,78 @@ const Layout = () => {
   );
 };
 
+import { Preferences } from '@capacitor/preferences';
+
 /* ================= MAIN APP ================= */
 
 export default function App() {
 
   const [user, setUser] = useState<IUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token");
+    const loadSession = async () => {
+      try {
+        const savedUserResult = await Preferences.get({ key: "user" });
+        const savedTokenResult = await Preferences.get({ key: "token" });
+        
+        const savedUser = savedUserResult.value;
+        const savedToken = savedTokenResult.value;
 
-    if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
-      setToken(savedToken);
-    }
+        if (savedUser && savedToken) {
+          // Check token expiration basic validation
+          try {
+            const payload = JSON.parse(atob(savedToken.split('.')[1]));
+            if (payload.exp && payload.exp * 1000 < Date.now()) {
+              // Expired
+              await Preferences.remove({ key: "user" });
+              await Preferences.remove({ key: "token" });
+              setUser(null);
+              setToken(null);
+            } else {
+              setUser(JSON.parse(savedUser));
+              setToken(savedToken);
+            }
+          } catch(e) {
+            // Invalid token
+          }
+        }
+      } catch (err) {
+        console.error("Failed to restore session:", err);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    loadSession();
   }, []);
 
-  const login = (u: IUser, t: string) => {
+  const login = async (u: IUser, t: string) => {
     setUser(u);
     setToken(t);
-    localStorage.setItem("user", JSON.stringify(u));
-    localStorage.setItem("token", t);
+    await Preferences.set({ key: "user", value: JSON.stringify(u) });
+    await Preferences.set({ key: "token", value: t });
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
     setToken(null);
-    localStorage.clear();
+    await Preferences.clear();
   };
+
+  if (isInitializing) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout }}>
 
-      {/* 🔥 Global Toast Container */}
+      {/* 🚀 Global Toast Container */}
       <Toaster
         position="bottom-right"
         toastOptions={{

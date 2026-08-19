@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, Mail } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { login as loginApi } from '../services/auth';
 import { useAuth } from '../App';
 
@@ -10,6 +10,7 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +37,7 @@ export default function Login() {
       // localStorage.setItem('token', data.token);
 
       // ✅ Store user in auth context
-      login(data.user, data.token);
+      await login(data.user, data.token);
 
       // ✅ Redirect to dashboard
       navigate('/', { replace: true });
@@ -100,13 +101,20 @@ export default function Login() {
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                 />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-10 pr-10 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 

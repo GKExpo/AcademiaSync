@@ -284,9 +284,9 @@ export default function AdminDashboard() {
 
 function Stat({ title, value, color = "text-gray-800" }: any) {
     return (
-        <div className="bg-white p-6 rounded-xl border shadow-sm">
-            <div className="text-sm text-gray-500">{title}</div>
-            <div className={`text-3xl font-bold ${color}`}>{value}</div>
+        <div className="bg-white p-6 rounded-2xl border shadow-sm transition hover:shadow-md">
+            <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{title}</div>
+            <div className={`text-4xl font-bold mt-2 ${color}`}>{value}</div>
         </div>
     );
 }
@@ -301,22 +301,24 @@ function RequestCard({
     loading
 }: any) {
     return (
-        <div className="bg-white p-5 rounded-xl border shadow-sm space-y-3">
+        <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4 transition hover:shadow-md">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-100 rounded-full">{icon}</div>
+                <div className="p-3 bg-gray-50 border rounded-xl text-gray-600">{icon}</div>
                 <div>
-                    <div className="font-semibold">{title}</div>
-                    <div className="text-xs text-gray-500">{subtitle}</div>
+                    <div className="font-semibold text-lg">{title}</div>
+                    <div className="text-sm text-gray-500 font-medium">{subtitle}</div>
                 </div>
             </div>
 
-            <div className="text-sm italic text-gray-600">"{reason}"</div>
+            <div className="text-sm bg-gray-50 p-3 rounded-lg border text-gray-700 italic">
+                "{reason}"
+            </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-3 pt-2">
                 <button
                     disabled={loading}
                     onClick={onApprove}
-                    className="flex-1 bg-green-600 text-white py-2 rounded-lg disabled:opacity-50"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {loading ? "Processing..." : "Approve"}
                 </button>
@@ -324,7 +326,7 @@ function RequestCard({
                 <button
                     disabled={loading}
                     onClick={onReject}
-                    className="flex-1 bg-red-100 text-red-600 py-2 rounded-lg disabled:opacity-50"
+                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-xl font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {loading ? "Processing..." : "Reject"}
                 </button>

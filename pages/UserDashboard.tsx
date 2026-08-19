@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../App";
 import TodayCard from "../components/dashboard/TodayCard";
@@ -7,8 +6,7 @@ import LeaveCard from "../components/dashboard/LeaveCard";
 import CalendarView from "../components/dashboard/CalendarView";
 import Modal from "../components/dashboard/Modal";
 import { Attendance } from "../types/attendance";
-
-const API_BASE = import.meta.env.VITE_API_URL;
+import { apiRequest } from "../services/api";
 
 export default function UserDashboard() {
     const { token } = useAuth();
@@ -36,16 +34,13 @@ export default function UserDashboard() {
 
             const month = currentDate.toISOString().slice(0, 7);
 
-            const res = await axios.get(
-                `${API_BASE}/api/attendance/me?month=${month}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+            const res = await apiRequest(`/api/attendance/me?month=${month}`, {
+                method: "GET"
+            });
 
             setAttendance(res);
 
-            const todayStr = new Date().toISOString().split("T")[0];
+            const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
             const todayRec = res.find(
                 (a: Attendance) => a.date === todayStr
             );
@@ -53,11 +48,7 @@ export default function UserDashboard() {
             setToday(todayRec || null);
 
         } catch (err: any) {
-            if (!err.response) {
-                toast.error("Network error. Please check connection.");
-            } else {
-                toast.error("Failed to load attendance");
-            }
+            toast.error("Failed to load attendance");
         } finally {
             setLoading(false);
         }
@@ -75,13 +66,12 @@ export default function UserDashboard() {
         try {
             setActionLoading(true);
 
-            await axios.post(
-                `${API_BASE}/api/attendance/check-in`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await apiRequest('/api/attendance/check-in', {
+                method: "POST",
+                body: JSON.stringify({})
+            });
 
-            toast.success("Checked in successfully 🎉");
+            toast.success("Checked in successfully ✅");
             await loadAttendance();
 
         } catch (err: any) {
@@ -101,11 +91,10 @@ export default function UserDashboard() {
         try {
             setActionLoading(true);
 
-            await axios.post(
-                `${API_BASE}/api/attendance/check-out`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await apiRequest('/api/attendance/check-out', {
+                method: "POST",
+                body: JSON.stringify({})
+            });
 
             toast.success("Checked out successfully ✅");
             await loadAttendance();
@@ -134,19 +123,16 @@ export default function UserDashboard() {
         try {
             setSubmitting(true);
 
-            await axios.post(
-                `${API_BASE}/api/requests/leave`,
-                {
+            await apiRequest('/api/requests/leave', {
+                method: "POST",
+                body: JSON.stringify({
                     fromDate: leaveFrom,
                     toDate: leaveTo,
                     reason: leaveReason
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+                })
+            });
 
-            toast.success("Leave request submitted 🚀");
+            toast.success("Leave request submitted 📝");
 
             setLeaveFrom("");
             setLeaveTo("");
