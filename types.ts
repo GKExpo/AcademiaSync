@@ -1,6 +1,7 @@
 export enum Role {
-  USER = 'user',
-  ADMIN = 'admin'
+  STAFF = 'staff',
+  HOD = 'hod',
+  PRINCIPAL = 'principal'
 }
 
 export enum AttendanceStatus {

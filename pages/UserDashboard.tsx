@@ -43,10 +43,10 @@ export default function UserDashboard() {
                 }
             );
 
-            setAttendance(res.data);
+            setAttendance(res);
 
             const todayStr = new Date().toISOString().split("T")[0];
-            const todayRec = res.data.find(
+            const todayRec = res.find(
                 (a: Attendance) => a.date === todayStr
             );
 
@@ -86,7 +86,7 @@ export default function UserDashboard() {
 
         } catch (err: any) {
             toast.error(
-                err?.response?.data?.message || "Check-in failed"
+                err?.message || "Check-in failed"
             );
         } finally {
             setActionLoading(false);
@@ -112,7 +112,7 @@ export default function UserDashboard() {
 
         } catch (err: any) {
             toast.error(
-                err?.response?.data?.message || "Check-out failed"
+                err?.message || "Check-out failed"
             );
         } finally {
             setActionLoading(false);
@@ -157,7 +157,7 @@ export default function UserDashboard() {
 
         } catch (err: any) {
             toast.error(
-                err?.response?.data?.message || "Leave request failed"
+                err?.message || "Leave request failed"
             );
         } finally {
             setSubmitting(false);
