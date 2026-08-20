@@ -13,7 +13,16 @@ const config: CapacitorConfig = {
   plugins: {
     StatusBar: {
       overlaysWebView: true,
+      backgroundColor: "#ffffff",
       style: "LIGHT"
+    },
+    SplashScreen: {
+      launchAutoHide: false,
+      backgroundColor: "#FFFFFF",
+      androidSplashResourceName: "ic_splash",
+      androidScaleType: "CENTER_CROP",
+      splashFullScreen: false,
+      splashImmersive: false
     }
   }
 };

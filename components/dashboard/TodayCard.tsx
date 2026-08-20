@@ -1,5 +1,6 @@
 import { LogIn, LogOut, Edit3 } from 'lucide-react';
 import { Attendance } from '../../types/attendance';
+import { formatTime } from '../../utils/format';
 
 export default function TodayCard({
     today,
@@ -34,18 +35,16 @@ export default function TodayCard({
                 )}
             </div>
             
-            {today && (
-                <div className="mt-3 grid grid-cols-2 gap-4 text-sm text-gray-600">
-                    <div className="bg-gray-50 p-2 rounded-lg border">
-                        <span className="block text-xs text-gray-400">Check In</span>
-                        <span className="font-medium">{today.check_in || today.checkIn || '--:--'}</span>
-                    </div>
-                    <div className="bg-gray-50 p-2 rounded-lg border">
-                        <span className="block text-xs text-gray-400">Check Out</span>
-                        <span className="font-medium">{today.check_out || today.checkOut || '--:--'}</span>
-                    </div>
+            <div className="mt-3 grid grid-cols-2 gap-4 text-sm text-gray-600">
+                <div className="bg-gray-50 p-2 rounded-lg border">
+                    <span className="block text-xs text-gray-400">Check In</span>
+                    <span className="font-medium">{formatTime(today?.check_in || today?.checkIn)}</span>
                 </div>
-            )}
+                <div className="bg-gray-50 p-2 rounded-lg border">
+                    <span className="block text-xs text-gray-400">Check Out</span>
+                    <span className="font-medium">{formatTime(today?.check_out || today?.checkOut)}</span>
+                </div>
+            </div>
 
             <div className="mt-5 flex gap-3">
                 {!today && (

@@ -3,6 +3,7 @@ import { useAuth } from "../App";
 import { apiRequest } from "../services/api";
 import toast from "react-hot-toast";
 import { User, ChevronRight, Clock } from "lucide-react";
+import { formatTime } from "../utils/format";
 
 interface IUser {
     _id: string;
@@ -17,6 +18,8 @@ interface IAttendance {
     status: string;
     checkIn?: string;
     checkOut?: string;
+    check_in?: string;
+    check_out?: string;
 }
 
 export default function AdminDashboard() {
@@ -118,23 +121,85 @@ export default function AdminDashboard() {
                             No attendance records found.
                         </div>
                     ) : (
-                        <div className="bg-gray-50 rounded-xl border border-gray-100 overflow-hidden">
-                            {attendanceData.map((r, idx) => (
-                                <div key={r._id} className={`flex justify-between items-center p-3 text-sm ${idx !== attendanceData.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                                    <span className="font-medium text-gray-700">{r.date}</span>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-gray-500 text-[10px]">{r.check_in || r.checkIn || '--:--'} to {r.check_out || r.checkOut || '--:--'}</span>
-                                        <span className={`capitalize font-semibold px-2 py-0.5 rounded-md text-[10px] ${
-                                            r.status === 'present' ? 'bg-green-100 text-green-700' :
-                                            r.status === 'absent' ? 'bg-red-100 text-red-700' :
-                                            r.status === 'leave' ? 'bg-purple-100 text-purple-700' :
-                                            'bg-orange-100 text-orange-700'
-                                        }`}>
-                                            {r.status.replace("_", " ")}
-                                        </span>
+                        <div className="space-y-4">
+                            {attendanceData.map((r) => {
+                                // Safe formatting
+                                const checkIn = r.check_in || r.checkIn;
+                                const checkOut = r.check_out || r.checkOut;
+                                
+                                const formattedCheckIn = formatTime(checkIn);
+                                const formattedCheckOut = formatTime(checkOut);
+                                
+                                let formattedDate = r.date;
+                                try {
+                                    const d = new Date(r.date);
+                                    if (!isNaN(d.getTime())) {
+                                        formattedDate = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                                    }
+                                } catch {}
+
+                                const statusColor = 
+                                    r.status === 'present' ? 'bg-green-100 text-green-700 border-green-200' :
+                                    r.status === 'absent' ? 'bg-red-100 text-red-700 border-red-200' :
+                                    r.status === 'leave' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                                    'bg-orange-100 text-orange-700 border-orange-200';
+                                
+                                let durationStr = null;
+                                if (checkIn && checkOut) {
+                                    try {
+                                        const d1 = new Date(checkIn);
+                                        const d2 = new Date(checkOut);
+                                        if (!isNaN(d1.getTime()) && !isNaN(d2.getTime())) {
+                                            const diff = d2.getTime() - d1.getTime();
+                                            const hours = Math.floor(diff / (1000 * 60 * 60));
+                                            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                            durationStr = `${hours}h ${mins}m`;
+                                        }
+                                    } catch {}
+                                }
+
+                                const isMissingBoth = (!checkIn && !checkOut);
+                                
+                                return (
+                                    <div key={r._id} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm flex flex-col">
+                                        <div className="flex justify-between items-center px-4 py-3 bg-gray-50 border-b border-gray-100">
+                                            <span className="font-semibold text-gray-800 text-sm">{formattedDate}</span>
+                                            <span className={`capitalize font-semibold px-2.5 py-1 rounded-md text-[11px] border ${statusColor}`}>
+                                                {r.status.replace("_", " ")}
+                                            </span>
+                                        </div>
+                                        <div className="p-4 flex justify-between items-center bg-white">
+                                            {isMissingBoth ? (
+                                                <div className="text-gray-400 text-sm italic w-full text-center">
+                                                    No attendance recorded
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1">Check In</span>
+                                                        <span className="font-semibold text-gray-900 text-sm">{formattedCheckIn}</span>
+                                                    </div>
+                                                    
+                                                    {durationStr && (
+                                                        <div className="flex flex-col items-center justify-center px-4">
+                                                            <div className="h-[1px] w-8 bg-gray-200 mb-1 rounded-full relative">
+                                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-100 px-2 py-0.5 rounded-full text-[10px] font-semibold text-gray-600 border border-gray-200 whitespace-nowrap">
+                                                                    {durationStr}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div className="flex flex-col text-right">
+                                                        <span className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1">Check Out</span>
+                                                        <span className="font-semibold text-gray-900 text-sm">{formattedCheckOut}</span>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>

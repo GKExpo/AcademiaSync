@@ -100,7 +100,10 @@ const Header = ({
 
   return (
     <>
-      <header className="bg-white border-b h-16 flex items-center justify-between px-4 sticky top-0 z-20 box-content pt-[env(safe-area-inset-top)]">
+      <header 
+        className="bg-white border-b h-14 flex items-center justify-between px-4 sticky top-0 z-20 box-content"
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      >
         <h1 className="font-semibold text-lg">
           {title}
         </h1>
@@ -225,6 +228,7 @@ const Layout = () => {
 };
 
 import { Preferences } from '@capacitor/preferences';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 /* ================= MAIN APP ================= */
 
@@ -281,23 +285,14 @@ export default function App() {
     await Preferences.clear();
   };
 
+  useEffect(() => {
+    if (!isInitializing) {
+      SplashScreen.hide().catch(() => {});
+    }
+  }, [isInitializing]);
+
   if (isInitializing) {
-    return (
-      <div className="h-screen w-screen flex flex-col items-center justify-between bg-white py-12" style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top))', paddingBottom: 'calc(3rem + env(safe-area-inset-bottom))' }}>
-        <div className="flex-1 flex flex-col items-center justify-center">
-           <div className="w-24 h-24 bg-blue-600 text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg mb-6">
-               <span className="font-bold text-4xl">AS</span>
-           </div>
-           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">AcademiaSync</h1>
-           <div className="mt-12">
-               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-           </div>
-        </div>
-        <div className="flex flex-col items-center opacity-60">
-           <p className="text-gray-500 text-xs font-bold tracking-widest uppercase mt-1">by SKC</p>
-        </div>
-      </div>
-    );
+    return null; // completely null so no DOM is rendered, just the native splash
   }
 
   return (

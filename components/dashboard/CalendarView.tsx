@@ -3,6 +3,7 @@ import { Attendance } from "../../types/attendance";
 import Modal from "./Modal";
 import axios from "axios";
 import { useAuth } from "../../App";
+import { formatTime } from "../../utils/format";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { apiRequest } from "../../services/api";
 import toast from "react-hot-toast";
@@ -200,11 +201,11 @@ export default function CalendarView({
                                 </div>
                                 <div>
                                     <span className="block text-xs text-gray-400 mb-1">Check In</span>
-                                    <strong className="text-gray-900">{selected.check_in || selected.checkIn || "--:--"}</strong>
+                                    <strong className="text-gray-900">{formatTime(selected.check_in || selected.checkIn)}</strong>
                                 </div>
                                 <div>
                                     <span className="block text-xs text-gray-400 mb-1">Check Out</span>
-                                    <strong className="text-gray-900">{selected.check_out || selected.checkOut || "--:--"}</strong>
+                                    <strong className="text-gray-900">{formatTime(selected.check_out || selected.checkOut)}</strong>
                                 </div>
                             </div>
 
