@@ -6,9 +6,14 @@ export type AttendanceStatus =
     | 'PRESENT';
 
 export interface Attendance {
+    _id?: string;
+    userId?: string;
     date: string;
     checkIn?: string;
     checkOut?: string;
-    status: AttendanceStatus;
+    check_in?: string;
+    check_out?: string;
+    status: string;
     totalHours?: number;
+    total_hours?: number;
 }

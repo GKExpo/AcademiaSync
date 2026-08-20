@@ -14,8 +14,11 @@ export default function TodayCard({
     onEdit: () => void;
     disabled?: boolean;
 }) {
-    const statusText = today ? (today.checkOut ? 'Completed' : 'Checked In') : 'Not Checked In';
-    const statusColor = today ? (today.checkOut ? 'text-green-600' : 'text-blue-600') : 'text-gray-600';
+    const hasCheckedOut = today ? (today.check_out || today.checkOut) : false;
+    const statusText = today ? (hasCheckedOut ? 'Completed' : 'Checked In') : 'Not Checked In';
+    const statusColor = today ? (hasCheckedOut ? 'text-green-600' : 'text-blue-600') : 'text-gray-600';
+    
+    const totalHours = today?.total_hours ?? today?.totalHours;
 
     return (
         <div className="bg-white p-6 rounded-2xl border shadow-sm transition hover:shadow-md">
@@ -24,9 +27,9 @@ export default function TodayCard({
                 <p className={`text-3xl font-bold ${statusColor}`}>
                     {statusText}
                 </p>
-                {today?.totalHours != null && (
+                {totalHours != null && (
                     <span className="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
-                        {today.totalHours} hrs
+                        {totalHours} hrs
                     </span>
                 )}
             </div>
@@ -35,11 +38,11 @@ export default function TodayCard({
                 <div className="mt-3 grid grid-cols-2 gap-4 text-sm text-gray-600">
                     <div className="bg-gray-50 p-2 rounded-lg border">
                         <span className="block text-xs text-gray-400">Check In</span>
-                        <span className="font-medium">{today.checkIn || '--:--'}</span>
+                        <span className="font-medium">{today.check_in || today.checkIn || '--:--'}</span>
                     </div>
                     <div className="bg-gray-50 p-2 rounded-lg border">
                         <span className="block text-xs text-gray-400">Check Out</span>
-                        <span className="font-medium">{today.checkOut || '--:--'}</span>
+                        <span className="font-medium">{today.check_out || today.checkOut || '--:--'}</span>
                     </div>
                 </div>
             )}
@@ -55,7 +58,7 @@ export default function TodayCard({
                     </button>
                 )}
 
-                {today && !today.checkOut && (
+                {today && !hasCheckedOut && (
                     <button
                         onClick={onCheckOut}
                         disabled={disabled}

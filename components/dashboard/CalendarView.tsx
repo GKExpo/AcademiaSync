@@ -198,11 +198,11 @@ export default function CalendarView({
                                 </div>
                                 <div>
                                     <span className="block text-xs text-gray-400 mb-1">Check In</span>
-                                    <strong className="text-gray-900">{selected.checkIn || "--:--"}</strong>
+                                    <strong className="text-gray-900">{selected.check_in || selected.checkIn || "--:--"}</strong>
                                 </div>
                                 <div>
                                     <span className="block text-xs text-gray-400 mb-1">Check Out</span>
-                                    <strong className="text-gray-900">{selected.checkOut || "--:--"}</strong>
+                                    <strong className="text-gray-900">{selected.check_out || selected.checkOut || "--:--"}</strong>
                                 </div>
                             </div>
 
@@ -210,8 +210,8 @@ export default function CalendarView({
                                 <button
                                     className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium shadow-sm transition mt-4"
                                     onClick={() => {
-                                        setEditIn(selected.checkIn || "");
-                                        setEditOut(selected.checkOut || "");
+                                        setEditIn(selected.check_in || selected.checkIn || "");
+                                        setEditOut(selected.check_out || selected.checkOut || "");
                                         setEditMode(true);
                                     }}
                                 >

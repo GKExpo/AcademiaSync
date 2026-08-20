@@ -16,8 +16,8 @@ export default function AttendanceDetailModal({
 }) {
     const { token } = useAuth();
 
-    const [checkIn, setCheckIn] = useState(attendance.checkIn || "");
-    const [checkOut, setCheckOut] = useState(attendance.checkOut || "");
+    const [checkIn, setCheckIn] = useState(attendance.check_in || attendance.checkIn || "");
+    const [checkOut, setCheckOut] = useState(attendance.check_out || attendance.checkOut || "");
     const [reason, setReason] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
@@ -60,7 +60,7 @@ export default function AttendanceDetailModal({
                 <div className="space-y-2 text-sm mb-4">
                     <div>Date: {attendance.date}</div>
                     <div>Status: {attendance.status}</div>
-                    <div>Total Hours: {attendance.totalHours || 0}</div>
+                    <div>Total Hours: {attendance.total_hours || attendance.totalHours || 0}</div>
                 </div>
 
                 <form onSubmit={submitEdit} className="space-y-3">
