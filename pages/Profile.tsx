@@ -17,11 +17,10 @@ export default function Profile() {
     };
 
     return (
-        <div className="w-full space-y-6 pb-16 max-w-md mx-auto">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Profile</h2>
+        <div className="w-full space-y-6 max-w-md mx-auto">
             
             {/* Header / Avatar */}
-            <div className="flex flex-col items-center bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+            <div className="flex flex-col items-center bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mt-2">
                 <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
                     <User size={40} />
                 </div>
@@ -33,12 +32,12 @@ export default function Profile() {
                 </div>
             </div>
 
-            {/* Settings Links */}
             <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
                 
                 <div className="px-5 py-4 border-b border-gray-50 flex flex-col">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">College Information</span>
-                    <span className="font-medium text-gray-800 text-sm">Department: {user.role.includes('principal') ? 'Administration' : 'TE'}</span>
+                    <span className="font-medium text-gray-800 text-sm">Department: {user.department || (user.role.includes('principal') ? 'Administration' : 'TE')}</span>
+                    <span className="font-medium text-gray-800 text-sm mt-1">Designation: {user.role.includes('hod') ? 'Head of Department' : 'Faculty'}</span>
                     <span className="font-medium text-gray-800 text-sm mt-1">Biometric ID: Not Assigned</span>
                 </div>
 
@@ -67,16 +66,36 @@ export default function Profile() {
                     </div>
                     <ChevronRight size={18} className="text-gray-400" />
                 </button>
+            </div>
 
-                <button onClick={handleLogout} className="w-full flex items-center justify-between p-5 hover:bg-red-50 transition active:bg-red-100 group">
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-red-50 text-red-600 group-hover:bg-red-100 flex items-center justify-center">
-                            <LogOut size={18} />
-                        </div>
-                        <div className="font-semibold text-red-600">Logout</div>
-                    </div>
-                </button>
+            <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
+                <div className="px-5 py-3 border-b border-gray-50 bg-gray-50/50">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Legal</span>
+                </div>
+                <Link to="/privacy" className="flex items-center justify-between p-4 hover:bg-gray-50 transition border-b border-gray-50">
+                    <div className="font-medium text-sm text-gray-700">Privacy Policy</div>
+                    <ChevronRight size={16} className="text-gray-300" />
+                </Link>
+                <Link to="/terms" className="flex items-center justify-between p-4 hover:bg-gray-50 transition border-b border-gray-50">
+                    <div className="font-medium text-sm text-gray-700">Terms & Conditions</div>
+                    <ChevronRight size={16} className="text-gray-300" />
+                </Link>
+                <div className="p-4 text-xs text-gray-400 text-center">
+                    © 2026 SKC. All rights reserved.
+                </div>
+            </div>
 
+            <button onClick={handleLogout} className="w-full bg-white rounded-3xl border border-gray-100 flex items-center justify-center p-4 hover:bg-red-50 transition active:bg-red-100 group shadow-sm">
+                <div className="flex items-center gap-3">
+                    <LogOut size={18} className="text-red-500" />
+                    <div className="font-bold text-red-500">Logout</div>
+                </div>
+            </button>
+
+            <div className="text-center py-6 opacity-70">
+                <h4 className="font-bold text-gray-800 text-lg">AcademiaSync</h4>
+                <p className="text-gray-500 text-xs font-semibold tracking-widest uppercase mt-1">by SKC</p>
+                <p className="text-gray-400 text-xs mt-1">Version 1.2.0</p>
             </div>
 
             {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}

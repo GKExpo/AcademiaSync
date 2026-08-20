@@ -8,10 +8,10 @@ async function login(email) {
   });
   if (!res.ok) throw new Error(`Login failed for ${email}`);
   const data = await res.json();
-  return data.token;
+  return { token: data.token, user: data.user };
 }
 
-async function getAdminData(token, endpoint) {
+async function getData(token, endpoint) {
   const res = await fetch(`https://academiasync-backend.shardulk091.workers.dev${endpoint}`, {
     headers: { "Authorization": `Bearer ${token}` }
   });
@@ -19,27 +19,18 @@ async function getAdminData(token, endpoint) {
 }
 
 async function run() {
-  const users = [
-    { role: 'Staff 1', email: 'rspande@college.edu' },
-    { role: 'HOD', email: 'hod.te@college.edu' },
-    { role: 'Principal', email: 'principal@college.edu' },
-  ];
+  try {
+    const auth = await login('pdlondhe@college.edu');
+    console.log(`Login successful. User ID: ${auth.user.id}`);
+    
+    const summary = await getData(auth.token, `/api/attendance/summary/${auth.user.id}?month=2026-08`);
+    console.log(`Summary:`, summary.data);
 
-  for (const u of users) {
-    console.log(`\nTesting ${u.role} (${u.email})...`);
-    try {
-      const token = await login(u.email);
-      console.log(`  Login successful.`);
-      
-      const subs = await getAdminData(token, '/api/admin/subordinates');
-      console.log(`  /api/admin/subordinates -> Status: ${subs.status}`);
-      if (subs.ok && Array.isArray(subs.data)) {
-        console.log(`  -> Can see ${subs.data.length} subordinates.`);
-      }
-
-    } catch (e) {
-      console.error(`  Error: ${e.message}`);
-    }
+    const att = await getData(auth.token, `/api/attendance/me?month=2026-08`);
+    console.log(`Attendance Records Count:`, att.data?.data?.length || att.data?.length);
+    console.log(`First record:`, (att.data?.data || att.data)[0]);
+  } catch (e) {
+    console.error(`Error: ${e.message}`);
   }
 }
 

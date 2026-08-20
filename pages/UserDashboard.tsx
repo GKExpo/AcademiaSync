@@ -36,7 +36,8 @@ export default function UserDashboard() {
             setToday(todayRec || null);
             
             // Also fetch summary
-            const sumData = await apiRequest(`/api/attendance/summary/${user?._id}?month=${monthQuery}`);
+            const userId = (user as any)?.id || user?._id;
+            const sumData = await apiRequest(`/api/attendance/summary/${userId}?month=${monthQuery}`);
             if (sumData) setSummary(sumData);
             
         } catch (err: any) {

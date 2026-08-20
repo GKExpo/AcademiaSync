@@ -100,7 +100,7 @@ const Header = ({
 
   return (
     <>
-      <header className="bg-white border-b h-16 flex items-center justify-between px-4 sticky top-0 z-20 box-content">
+      <header className="bg-white border-b h-16 flex items-center justify-between px-4 sticky top-0 z-20 box-content pt-[env(safe-area-inset-top)]">
         <h1 className="font-semibold text-lg">
           {title}
         </h1>
@@ -185,6 +185,8 @@ import Attendance from "./pages/Attendance";
 import LeavePage from "./pages/LeavePage"; // Will create
 import Profile from "./pages/Profile"; // Will create
 import Requests from "./pages/Requests"; // Will create
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 
 const Layout = () => {
   const { user } = useAuth();
@@ -281,8 +283,19 @@ export default function App() {
 
   if (isInitializing) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="h-screen w-screen flex flex-col items-center justify-between bg-white py-12" style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top))', paddingBottom: 'calc(3rem + env(safe-area-inset-bottom))' }}>
+        <div className="flex-1 flex flex-col items-center justify-center">
+           <div className="w-24 h-24 bg-blue-600 text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg mb-6">
+               <span className="font-bold text-4xl">AS</span>
+           </div>
+           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">AcademiaSync</h1>
+           <div className="mt-12">
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+           </div>
+        </div>
+        <div className="flex flex-col items-center opacity-60">
+           <p className="text-gray-500 text-xs font-bold tracking-widest uppercase mt-1">by SKC</p>
+        </div>
       </div>
     );
   }
@@ -303,6 +316,8 @@ export default function App() {
       <HashRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsConditions />} />
           <Route path="/*" element={<Layout />} />
         </Routes>
       </HashRouter>
