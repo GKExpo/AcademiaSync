@@ -85,7 +85,7 @@ export default function UserDashboard() {
             {/* Greeting */}
             <div className="mb-2">
                 <h2 className="text-2xl font-bold text-gray-900">
-                    Welcome back, {user?.name.split(' ')[0]}! 👋
+                    Welcome back! 👋
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">
                     Here is your overview for today.

@@ -9,6 +9,13 @@ const config: CapacitorConfig = {
     allowNavigation: [
       'academiasync-backend.shardulk091.workers.dev'
     ]
+  },
+  plugins: {
+    StatusBar: {
+      overlaysWebView: false,
+      backgroundColor: "#ffffff",
+      style: "LIGHT"
+    }
   }
 };
 

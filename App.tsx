@@ -100,7 +100,7 @@ const Header = ({
 
   return (
     <>
-      <header className="bg-white border-b h-16 flex items-center justify-between px-4 sticky top-0 z-20 pt-[env(safe-area-inset-top)] box-content">
+      <header className="bg-white border-b h-16 flex items-center justify-between px-4 sticky top-0 z-20 box-content">
         <h1 className="font-semibold text-lg">
           {title}
         </h1>
